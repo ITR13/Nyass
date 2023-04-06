@@ -1,2 +1,11 @@
 BGM: https://opengameart.org/content/space-shooter-music
 CC-BY 3.0
+
+Enemy Breaking: https://opengameart.org/content/breaking-bottle
+CC-BY 3.0
+
+Metal Impact Sounds: https://opengameart.org/content/metal-impact-sounds
+CC0
+
+Spaceshoot: https://opengameart.org/content/space-shoot-sounds
+CC0

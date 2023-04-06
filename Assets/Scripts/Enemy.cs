@@ -64,7 +64,16 @@ class Enemy : MonoBehaviour
             {
                 transform.localScale *= 1.05f;
             }
+            AudioManager.Dent();
             return;
+        }
+        if (_grow)
+        {
+            AudioManager.Explode();
+        }
+        else
+        {
+            AudioManager.Break();
         }
 
         var score = 20;

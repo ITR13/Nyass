@@ -87,6 +87,7 @@ public class Player : MonoBehaviour
             return;
         }
         _shotTimer -= TimePerShot;
+        AudioManager.Shoot();
 
         _lastShotWasInverted = shootRegular && shootInverted ? !_lastShotWasInverted : shootInverted;
         var bullet = (_lastShotWasInverted ? _invertedBulletPool : _regularBulletPool).Get();

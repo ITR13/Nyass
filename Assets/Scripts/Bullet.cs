@@ -33,6 +33,7 @@ public class Bullet : MonoBehaviour
         else
         {
             OnMissedShot?.Invoke();
+            AudioManager.Miss();
         }
 
         Pool.Release(transform);

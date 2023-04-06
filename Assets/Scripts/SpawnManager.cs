@@ -136,7 +136,7 @@ public class SpawnManager : MonoBehaviour
         _spawner.Spawn(0, 4, 1, SpawnFormation.Line, SpawnPattern.Regular, Sp2b,
             new MCombine(new MLeft())
         );
-        _spawner.Spawn(Sp2b * 4, 4, 1, SpawnFormation.Line, SpawnPattern.Inverted, -Sp2b,
+        _spawner.Spawn(Sp2b * 3, 4, 1, SpawnFormation.Line, SpawnPattern.Inverted, -Sp2b,
             new MCombine(new MLeft())
         );
     }
@@ -190,7 +190,7 @@ public class SpawnManager : MonoBehaviour
         _spawner.Spawn(0, 6, 1, SpawnFormation.Line, SpawnPattern.Regular, Sp2b,
             new MCombine(new MLeft(), new MSine { Direction = Vector2.up * 0.25f, Period = Sp4b })
         );
-        _spawner.Spawn(Sp2b * 6, 6, 1, SpawnFormation.Line, SpawnPattern.Inverted, -Sp2b,
+        _spawner.Spawn(Sp2b * 5, 6, 1, SpawnFormation.Line, SpawnPattern.Inverted, -Sp2b,
             new MCombine(new MLeft(), new MSine { Direction = Vector2.down * 0.25f, Period = Sp4b })
         );
     }
