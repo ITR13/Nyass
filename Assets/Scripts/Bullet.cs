@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Pool;
 
 public class Bullet : MonoBehaviour
@@ -10,6 +11,8 @@ public class Bullet : MonoBehaviour
 
     public ObjectPool<Transform> Pool;
     private bool _wasHit = false;
+
+    public static event Action OnMissedShot;
 
     private void OnEnable()
     {
@@ -27,6 +30,10 @@ public class Bullet : MonoBehaviour
         {
             enemy.WasHit();
         }
+        else
+        {
+            OnMissedShot?.Invoke();
+        }
 
         Pool.Release(transform);
     }
@@ -35,11 +42,13 @@ public class Bullet : MonoBehaviour
     {
         if (transform.position.x < -10 || transform.position.x > 10)
         {
+            OnMissedShot?.Invoke();
             Pool.Release(transform);
             return;
         }
         if (transform.position.y < -6 || transform.position.y > 6)
         {
+            OnMissedShot?.Invoke();
             Pool.Release(transform);
             return;
         }

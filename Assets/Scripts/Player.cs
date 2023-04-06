@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     private float _shotTimer;
 
     private float _invulnerableTimer;
+    [SerializeField]
     private Renderer _renderer;
 
     private void Awake()
@@ -103,6 +104,7 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        Debug.Log("OnTriggerEnter");
         var enemy = collision.GetComponent<Enemy>();
         if (enemy)
         {

@@ -17,7 +17,26 @@ class Enemy : MonoBehaviour
 
     private HashSet<Enemy> _group;
 
-    public void SetStats(Vector2 startPosition, int health, float t, MovePattern movement, HashSet<Enemy> group)
+    private bool _grow;
+    private bool _missed;
+
+    private void OnEnable()
+    {
+        Bullet.OnMissedShot += OnMiss;
+    }
+
+    private void OnDisable()
+    {
+        Bullet.OnMissedShot -= OnMiss;
+    }
+
+
+    private void OnMiss()
+    {
+        _missed = true;
+    }
+
+    public void SetStats(Vector2 startPosition, int health, float t, MovePattern movement, HashSet<Enemy> group, bool grow = false)
     {
         _startPosition = startPosition;
         transform.position = startPosition;
@@ -26,6 +45,12 @@ class Enemy : MonoBehaviour
         _movement = movement;
         gameObject.SetActive(true);
         _group = group;
+
+        transform.rotation = Quaternion.identity;
+        transform.localScale = Vector3.one;
+        _grow = grow;
+
+        _missed = false;
     }
 
     public void WasHit()
@@ -33,16 +58,26 @@ class Enemy : MonoBehaviour
         _health -= 1;
         if (_health > 0)
         {
+            GameManager.AddScore(5);
+            transform.Rotate(0, 0, 45f);
+            if (_grow)
+            {
+                transform.localScale *= 1.05f;
+            }
             return;
         }
 
-        GameManager.AddScore(10);
+        var score = 20;
         _group.Remove(this);
         if (_group.Count == 0)
         {
-            GameManager.AddScore(200);
+            score += 100;
+            if (!_missed)
+            {
+                score += 20;
+            }
         }
-
+        GameManager.AddScore(score);
 
         Pool.Release(this);
     }

@@ -43,7 +43,7 @@ public class Spawner : MonoBehaviour
     }
 
 
-    public void Spawn(float initialDelay, int count, int health, SpawnFormation formation, SpawnPattern pattern, float delay, MovePattern movement)
+    public void Spawn(float initialDelay, int count, int health, SpawnFormation formation, SpawnPattern pattern, float delay, MovePattern movement, bool grow=false)
     {
         var enemies = new HashSet<Enemy>();
         for (var i = 0; i < count; i++)
@@ -65,18 +65,18 @@ public class Spawner : MonoBehaviour
             {
                 var percent = i / (float)count;
                 spawnPoint += new Vector3(
-                    Mathf.Cos(percent * Mathf.PI * 2),
+                    Mathf.Cos(percent * Mathf.PI * 2) + 1,
                     Mathf.Sin(percent * Mathf.PI * 2) * MaxHeight
                 );
             }
 
             var enemy = (isInverted ? _invertedPool : _regularPool).Get();
             enemies.Add(enemy);
-            enemy.SetStats(spawnPoint, health, -initialDelay - delay * i, movement, enemies);
+            enemy.SetStats(spawnPoint, health, -initialDelay - delay * i, movement, enemies, grow);
         }
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position + Vector3.down * MaxHeight, transform.position + Vector3.up * MaxHeight);

@@ -2,8 +2,8 @@
 
 public class MPingPong : MovePattern
 {
-    public Vector2 Zero = Vector2.down * 5, One = Vector2.up * 5;
-    public float Period = 2;
+    public Vector2 Zero = Vector2.down * 4, One = Vector2.up * 4;
+    public float Period = SpawnManager.Sp2b;
 
     public override Vector2 Get(float t)
     {
