@@ -19,6 +19,9 @@ public class Player : MonoBehaviour
     private bool _lastShotWasInverted;
     private float _shotTimer;
 
+    private float _invulnerableTimer;
+    private Renderer _renderer;
+
     private void Awake()
     {
         void onGet(Transform bullet)
@@ -84,5 +87,30 @@ public class Player : MonoBehaviour
 
         _lastShotWasInverted = shootRegular && shootInverted ? !_lastShotWasInverted : shootInverted;
         var bullet = (_lastShotWasInverted ? _invertedBulletPool : _regularBulletPool).Get();
+    }
+
+    private void FixedUpdate()
+    {
+        if (_invulnerableTimer <= 0) return;
+        _invulnerableTimer -= Time.fixedDeltaTime;
+        if (_invulnerableTimer <= 0)
+        {
+            _renderer.material.SetInt("_Inverted", 0);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        var enemy = collision.GetComponent<Enemy>();
+        if (enemy)
+        {
+            enemy.Pool.Release(enemy);
+        }
+
+        if (_invulnerableTimer > 0) return;
+        _renderer.material.SetInt("_Inverted", 1);
+        _invulnerableTimer = 3;
+
+        GameManager.AddScore(-50);
     }
 }

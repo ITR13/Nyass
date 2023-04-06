@@ -22,7 +22,7 @@ public class Bullet : MonoBehaviour
         if (_wasHit) return;
         _wasHit = true;
 
-        var enemy = collision.GetComponent<Enemy>();
+        var enemy = collision.attachedRigidbody.GetComponent<Enemy>();
         if(_inverted == enemy.Inverted)
         {
             enemy.WasHit();

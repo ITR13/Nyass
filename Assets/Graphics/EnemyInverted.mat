@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PlayerShot
+  m_Name: EnemyInverted
   m_Shader: {fileID: -6465566751694194690, guid: 837b5c54a230511409985611f4958563, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -38,7 +38,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Inverted: 0
+    - _Inverted: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.9960785, g: 0.9960785, b: 0.6784314, a: 1}
   m_BuildTextureStacks: []
