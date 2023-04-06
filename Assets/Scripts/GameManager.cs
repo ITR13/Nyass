@@ -20,4 +20,10 @@ public static class GameManager
         Running = false;
         Debug.Log($"Final Score: " + Score);
     }
+
+    public static void StartGame()
+    {
+        Running = true;
+        Score = 0;
+    }
 }

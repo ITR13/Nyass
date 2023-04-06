@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     private Transform _regularBulletPrefab, _invertedBulletPrefab;
     private ObjectPool<Transform> _regularBulletPool, _invertedBulletPool;
 
-    public float TimePerShot;
+    public const float TimePerShot = SpawnManager.SpB;
 
     private bool _lastShotWasInverted;
     private float _shotTimer;
@@ -58,6 +58,8 @@ public class Player : MonoBehaviour
             onGet,
             onRelease
         );
+
+        GameManager.StartGame();
     }
 
     private void Update()

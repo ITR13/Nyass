@@ -51,8 +51,8 @@ class Enemy : MonoBehaviour
     {
         _t += Time.fixedDeltaTime;
         if (_t < 0) return;
-        var offset = _movement.Get(_t);
-        Debug.Log($"{_t} -> {offset}");
+        var offset = _movement.Get(_t) + Mathf.Clamp01(Mathf.Sqrt(_t / SpawnManager.SpB)) * Vector2.left * 1.5f;
+
         _rigidbody.MovePosition(_startPosition + offset);
 
         if (transform.position.x < -10)

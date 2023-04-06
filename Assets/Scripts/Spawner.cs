@@ -11,7 +11,7 @@ public class Spawner : MonoBehaviour
     private Enemy _regularPrefab, _invertedPrefab;
 
     private ObjectPool<Enemy> _regularPool, _invertedPool;
-    private bool _lastSpawnedWasInverted;
+    private bool _lastSpawnedWasInverted = true;
 
     private void Awake()
     {
@@ -43,7 +43,7 @@ public class Spawner : MonoBehaviour
     }
 
 
-    public void Spawn(int count, int health, SpawnFormation formation, SpawnPattern pattern, float delay, MovePattern movement)
+    public void Spawn(float initialDelay, int count, int health, SpawnFormation formation, SpawnPattern pattern, float delay, MovePattern movement)
     {
         var enemies = new HashSet<Enemy>();
         for (var i = 0; i < count; i++)
@@ -72,7 +72,7 @@ public class Spawner : MonoBehaviour
 
             var enemy = (isInverted ? _invertedPool : _regularPool).Get();
             enemies.Add(enemy);
-            enemy.SetStats(spawnPoint, health, -delay * i, movement, enemies);
+            enemy.SetStats(spawnPoint, health, -initialDelay - delay * i, movement, enemies);
         }
     }
 
