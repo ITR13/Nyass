@@ -38,6 +38,8 @@ public class SpawnManager : MonoBehaviour
 
     public static event Action OnNextWave;
 
+    private HashSet<Enemy> wave5Enemies, wave6Enemies, wave13Enemies;
+
     private void Awake()
     {
         _waves = new List<Wave>
@@ -60,6 +62,9 @@ public class SpawnManager : MonoBehaviour
             new ( Sp16b+Sp8b, Wave16 ),
             new ( Sp16b+Sp8b, Wave17 ),
         };
+
+        wave5Enemies = null;
+        wave6Enemies = null;
     }
 
     private void Start()
@@ -116,16 +121,22 @@ public class SpawnManager : MonoBehaviour
             new MCombine(new MLeft(), new MSine { Direction = Vector2.left * 1, Period = Sp4b })
         );
     }
+
     private void Wave5()
     {
-        _littleSpawner.Spawn(0, 8, 1, SpawnFormation.Circle, SpawnPattern.Inverted, SpB,
+        wave5Enemies = _littleSpawner.Spawn(0, 8, 1, SpawnFormation.Circle, SpawnPattern.Inverted, SpB,
             new MCombine(new MLeft(), new MSine { Direction = Vector2.up * 1, Period = Sp4b })
         );
     }
 
     private void Wave6()
     {
-        _spawner.Spawn(0, 8, 1, SpawnFormation.Line, SpawnPattern.Alternating, SpB,
+        if (wave5Enemies != null && wave5Enemies.Count != 0)
+        {
+            Debug.Log("Skipping wave 6");
+            return;
+        }
+        wave6Enemies = _spawner.Spawn(0, 8, 1, SpawnFormation.Line, SpawnPattern.Alternating, SpB,
             new NEaseInOut(new MCombine(new MLeft(), new MSine { Direction = Vector2.up, Period = Sp4b }, new MSine { Direction = Vector2.down, Period = Sp2b }), SpB)
         );
     }
@@ -133,6 +144,11 @@ public class SpawnManager : MonoBehaviour
 
     private void Wave7()
     {
+        if (wave6Enemies != null && wave6Enemies.Count != 0)
+        {
+            Debug.Log("Skipping wave 7");
+            return;
+        }
         _spawner.Spawn(0, 4, 1, SpawnFormation.Line, SpawnPattern.Regular, Sp2b,
             new MCombine(new MLeft())
         );
@@ -180,13 +196,25 @@ public class SpawnManager : MonoBehaviour
 
     private void Wave13()
     {
-        _littleSpawner.Spawn(0, 8, 1, SpawnFormation.Circle, SpawnPattern.Alternating, Sp2b,
+        wave13Enemies = _littleSpawner.Spawn(0, 8, 1, SpawnFormation.Circle, SpawnPattern.Alternating, Sp2b,
             new MCombine(new MLeft(), new NEaseInOut(new MPingPong { One = Vector2.up * 2, Zero = Vector2.down * 2, Period = SpB }, Sp2b))
         );
     }
 
     private void Wave14()
     {
+        if(wave13Enemies != null && wave13Enemies.Count > 0)
+        {
+            Debug.Log("Spawning easy wave 14");
+            _spawner.Spawn(Sp2b * 2, 4, 1, SpawnFormation.Line, SpawnPattern.Regular, Sp2b,
+                new MCombine(new MLeft(), new MSine { Direction = Vector2.up * 0.25f, Period = Sp4b })
+            );
+            _spawner.Spawn(Sp2b * 5, 4, 1, SpawnFormation.Line, SpawnPattern.Inverted, -Sp2b,
+                new MCombine(new MLeft(), new MSine { Direction = Vector2.down * 0.25f, Period = Sp4b })
+            );
+            return;
+        }
+
         _spawner.Spawn(0, 6, 1, SpawnFormation.Line, SpawnPattern.Regular, Sp2b,
             new MCombine(new MLeft(), new MSine { Direction = Vector2.up * 0.25f, Period = Sp4b })
         );

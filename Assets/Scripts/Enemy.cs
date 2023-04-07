@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Pool;
 
-class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
     [field: SerializeField] public bool Inverted { get; private set; }
     [SerializeField]

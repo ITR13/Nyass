@@ -43,7 +43,7 @@ public class Spawner : MonoBehaviour
     }
 
 
-    public void Spawn(float initialDelay, int count, int health, SpawnFormation formation, SpawnPattern pattern, float delay, MovePattern movement, bool grow=false)
+    public HashSet<Enemy> Spawn(float initialDelay, int count, int health, SpawnFormation formation, SpawnPattern pattern, float delay, MovePattern movement, bool grow=false)
     {
         var enemies = new HashSet<Enemy>();
         for (var i = 0; i < count; i++)
@@ -74,6 +74,8 @@ public class Spawner : MonoBehaviour
             enemies.Add(enemy);
             enemy.SetStats(spawnPoint, health, -initialDelay - delay * i, movement, enemies, grow);
         }
+
+        return enemies;
     }
 
     private void OnDrawGizmosSelected()
