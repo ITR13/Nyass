@@ -28,10 +28,12 @@ public class Bullet : MonoBehaviour
         var enemy = collision.attachedRigidbody.GetComponent<Enemy>();
         if(_inverted == enemy.Inverted)
         {
+            GameManager.AddShot(true);
             enemy.WasHit();
         }
         else
         {
+            GameManager.AddShot(false);
             OnMissedShot?.Invoke();
             AudioManager.Miss();
         }
@@ -43,12 +45,14 @@ public class Bullet : MonoBehaviour
     {
         if (transform.position.x < -10 || transform.position.x > 10)
         {
+            GameManager.AddShot(false);
             OnMissedShot?.Invoke();
             Pool.Release(transform);
             return;
         }
         if (transform.position.y < -6 || transform.position.y > 6)
         {
+            GameManager.AddShot(false);
             OnMissedShot?.Invoke();
             Pool.Release(transform);
             return;

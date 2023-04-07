@@ -105,7 +105,6 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("OnTriggerEnter");
         var enemy = collision.GetComponent<Enemy>();
         if (enemy)
         {

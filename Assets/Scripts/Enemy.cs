@@ -83,6 +83,7 @@ class Enemy : MonoBehaviour
             score += 100;
             if (!_missed)
             {
+                Debug.Log("Perfect!");
                 score += 20;
             }
         }
@@ -101,6 +102,7 @@ class Enemy : MonoBehaviour
 
         if (transform.position.x < -10)
         {
+            GameManager.AddShot(false);
             Pool.Release(this);
         }
     }
