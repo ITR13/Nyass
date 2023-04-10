@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using UnityEngine.SceneManagement;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -29,16 +30,23 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private Spawner _spawner, _littleSpawner, _topSpawner, _bottomSpawner;
     [SerializeField]
-    private AudioSource _bgm;
+    private AudioSource _bgm, _sfx;
 
     public float GameTime;
+    private int _prevGameTime;
+
     private float _nextWave = 0;
 
     private List<Wave> _waves;
 
     public static event Action OnNextWave;
+    public static event Action<int> OnTimeChanged;
 
     private HashSet<Enemy> wave5Enemies, wave6Enemies, wave13Enemies;
+
+    private bool _paused;
+    [SerializeField]
+    private GameObject _pauseMenu;
 
     private void Awake()
     {
@@ -65,11 +73,18 @@ public class SpawnManager : MonoBehaviour
 
         wave5Enemies = null;
         wave6Enemies = null;
+
+        _paused = false;
     }
 
     private void Start()
     {
         _nextWave = _waves[0].Time;
+
+        var bgmVolume = PlayerPrefs.GetInt("BgmVolume", 1);
+        var sfxVolume = PlayerPrefs.GetInt("SfxVolume", 1);
+        _bgm.volume = bgmVolume;
+        _sfx.volume = sfxVolume;
 
         if (GameTime <= 0) return;
         _bgm.time = GameTime;
@@ -84,7 +99,58 @@ public class SpawnManager : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape) && _waves.Count > 0)
+        {
+            TogglePause();
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            _bgm.volume = 1 - _bgm.volume;
+            PlayerPrefs.SetInt("BgmVolume", Mathf.RoundToInt(_bgm.volume));
+        }
+        else if (Input.GetKeyDown(KeyCode.N))
+        {
+            _sfx.volume = 1 - _sfx.volume;
+            PlayerPrefs.SetInt("SfxVolume", Mathf.RoundToInt(_sfx.volume));
+        }
+
+        if (_paused)
+        {
+            if (_waves.Count == 0)
+            {
+                TogglePause();
+            }
+            else if (Input.GetKeyDown(KeyCode.R))
+            {
+                SceneManager.LoadScene(0);
+                TogglePause();
+            }
+            else if (Input.GetKeyDown(KeyCode.F))
+            {
+                for (var i = 0; i < _waves.Count; i++)
+                {
+                    OnNextWave?.Invoke();
+                    GameManager.AddShot(false);
+                }
+                _waves.Clear();
+                _nextWave = GameTime;
+                GameTime = 60 + 60 + 6;
+                TogglePause();
+            }
+            return;
+        }
+
         GameTime += Time.deltaTime;
+
+        var timeInt = Mathf.FloorToInt(GameTime);
+        if (_prevGameTime != timeInt)
+        {
+            _prevGameTime = timeInt;
+            OnTimeChanged?.Invoke(timeInt);
+        }
+
         if (_nextWave > GameTime) return;
         if (_waves.Count == 0)
         {
@@ -101,6 +167,24 @@ public class SpawnManager : MonoBehaviour
         OnNextWave?.Invoke();
     }
 
+    private void TogglePause()
+    {
+        _paused = !_paused;
+
+        if (_paused)
+        {
+            _pauseMenu.SetActive(true);
+            _bgm.Pause();
+            Time.timeScale = 0;
+        }
+        else
+        {
+            _pauseMenu.SetActive(false);
+            _bgm.time = GameTime;
+            _bgm.Play();
+            Time.timeScale = 1;
+        }
+    }
     private void Wave1()
     {
         _spawner.Spawn(Sp4b, 3, 1, SpawnFormation.Single, SpawnPattern.Regular, Sp2b, new MLeft());
@@ -203,7 +287,7 @@ public class SpawnManager : MonoBehaviour
 
     private void Wave14()
     {
-        if(wave13Enemies != null && wave13Enemies.Count > 0)
+        if (wave13Enemies != null && wave13Enemies.Count > 0)
         {
             Debug.Log("Spawning easy wave 14");
             _spawner.Spawn(Sp2b * 2, 4, 1, SpawnFormation.Line, SpawnPattern.Regular, Sp2b,

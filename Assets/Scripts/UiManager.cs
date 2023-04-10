@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UiManager : MonoBehaviour
 {
@@ -11,6 +12,13 @@ public class UiManager : MonoBehaviour
     private GameObject[] _tutorial;
     [SerializeField]
     private TextMeshProUGUI _scoreText;
+
+    [SerializeField]
+    private GameObject _progress;
+    [SerializeField]
+    private Image _progressBar;
+    [SerializeField]
+    private TextMeshProUGUI _progressText;
 
     [SerializeField]
     private GameObject _highscores1, _highscores2;
@@ -28,6 +36,8 @@ public class UiManager : MonoBehaviour
         GameManager.OnScoreChanged += UpdateScore;
         GameManager.OnEndGame += EndGame;
 
+        SpawnManager.OnTimeChanged += UpdateTime;
+
         UpdateScore(GameManager.Score);
     }
 
@@ -36,6 +46,18 @@ public class UiManager : MonoBehaviour
         SpawnManager.OnNextWave -= NextTutorial;
         GameManager.OnScoreChanged -= UpdateScore;
         GameManager.OnEndGame -= EndGame;
+
+        SpawnManager.OnTimeChanged -= UpdateTime;
+    }
+    private void UpdateTime(int time)
+    {
+        var max = 60 + 60 + 6;
+        if(time > max) time = max;
+
+        _progressBar.fillAmount = time / (float)max;
+        var minutes = time / 60;
+        var seconds = time % 60;
+        _progressText.text = $"{minutes:0}:{seconds:00} / 2:06";
     }
 
     private void NextTutorial()
@@ -50,6 +72,7 @@ public class UiManager : MonoBehaviour
             _tutorial[i].SetActive(i == _currentTutorial);
         }
         _scoreText.enabled = _currentTutorial >= _tutorial.Length - 1;
+        _progress.gameObject.SetActive(_currentTutorial >= _tutorial.Length);
     }
 
     private void UpdateScore(int score)
@@ -67,7 +90,6 @@ public class UiManager : MonoBehaviour
         {
             PlayerPrefs.SetInt("Highscore", GameManager.Score);
         }
-
 
         var client = new GlobalstatsIOClient("uoyL6blSmd98pcsAe7zOCbYnmlRDsnAWM9ITl3LH", "UQG6jhlqQa328qoui2WFDTsMBl8F6QW0GD7ZVtpL");
         _highscores1.SetActive(true);
@@ -103,6 +125,7 @@ public class UiManager : MonoBehaviour
             yield return null;
         }
         _instruction.text = "Uploading score...";
+        PlayerPrefs.SetString("Username", _nameText.text);
 
         Dictionary<string, string> values = new Dictionary<string, string>();
         values.Add("scorekey", $"{GameManager.Score}");
